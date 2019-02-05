@@ -9,6 +9,8 @@ An error that is thrown or promise.rejected when a function is invoked before in
 const NO_INSTANCE_ERROR = 'No mixpanel instance created yet.  You must call sharedInstanceWithToken(token) or MixPanelInstance.initialize(token) before anything else and should wait for its promise to fulfill before others calls to avoid any internal native issue.'
 const uninitializedError: (string) => Error = (method: string) => new Error(`Mixpanel instance was not initialized yet.  Please run initialize() and wait for its promise to resolve before calling ${method}(...)`)
 let defaultInstance:?MixpanelInstance = null
+const NO_ERROR = 'Analytics not available - Code - MX-3P-J'
+
 
 /*
 A Mixpanel target.  Normally there is only one of these.  If you want to log to multiple Mixpanel projects, you can create a new instance of this class with a unique name.  Then call initiaze and you can start logging.
@@ -197,9 +199,17 @@ await mixpanel.initialize()
 mixpanel.track('my event')
 ```
 */
+
+function checkMixpanelIsAvailable() {
+  if (!RNMixpanel) {
+    throw new Error(NO_ERROR);
+  }
+}
+
 export default {
 
   sharedInstanceWithToken(apiToken: string): Promise<void> {
+    checkMixpanelIsAvailable();
     const instance = new MixpanelInstance(apiToken)
     if (!defaultInstance) defaultInstance = instance
     return instance.initialize()
@@ -209,6 +219,7 @@ export default {
   Gets the unique instance for a user.  If you want to use promises, use the MixpanelInstace class API instead.
   */
   getDistinctId(callback: (id: ?string) => void) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.getDistinctId()
@@ -222,6 +233,7 @@ export default {
   },
 
   getSuperProperty(propertyName: string, callback: (value: mixed) => void) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.getSuperProperty(propertyName)
@@ -235,30 +247,35 @@ export default {
   },
 
   track(event: string) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.track(event)
   },
 
   trackWithProperties(event: string, properties: Object) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.track(event, properties)
   },
 
   flush() {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.flush()
   },
 
   disableIpAddressGeolocalization() {
+    checkMixpanelIsAvailable()
       if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
       defaultInstance.disableIpAddressGeolocalization()
   },
 
   createAlias(alias: string) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.alias(alias)
@@ -271,78 +288,91 @@ export default {
   },
 
   timeEvent(event: string) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.timeEvent(event)
   },
 
   registerSuperProperties(properties: Object) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.registerSuperProperties(properties)
   },
 
   registerSuperPropertiesOnce(properties: Object) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.registerSuperPropertiesOnce(properties)
   },
 
   initPushHandling(token: string) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.initPushHandling(token)
   },
 
   set(properties: Object) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.set(properties)
   },
 
   setOnce(properties: Object) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.setOnce(properties)
   },
 
   removePushDeviceToken(deviceToken: Object) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.removePushDeviceToken(deviceToken)
   },
 
   removeAllPushDeviceTokens() {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.removeAllPushDeviceTokens()
   },
 
   trackCharge(charge: number) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.trackCharge(charge)
   },
 
   trackChargeWithProperties(charge: number, properties: Object) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.trackChargeWithProperties(charge, properties)
   },
 
   increment(property: string, by: number) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.increment(property, by)
   },
 
   union(name: string, properties: any[]) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.union(name, properties)
   },
 
   addPushDeviceToken(token: string) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.addPushDeviceToken(token)
@@ -350,6 +380,7 @@ export default {
 
   // android only
   setPushRegistrationId(token: string) {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.setPushRegistrationId(token)
@@ -357,12 +388,14 @@ export default {
 
   // android only
   clearPushRegistrationId() {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.clearPushRegistrationId()
   },
 
   reset() {
+    checkMixpanelIsAvailable()
     if (!defaultInstance) throw new Error(NO_INSTANCE_ERROR)
 
     defaultInstance.reset()
